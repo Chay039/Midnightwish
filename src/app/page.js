@@ -1,64 +1,46 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
+import "./page.css";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="home-container">
+      {/* Background Orbs */}
+      <div className="orb orb-1"></div>
+      <div className="orb orb-2"></div>
+      <div className="orb orb-3"></div>
+
+      <nav className="navbar glass-panel">
+        <div className="logo text-gradient-primary">Midnightwish</div>
+        <div className="nav-links">
+          <Link href="/login" className="btn-secondary">Log In</Link>
+          <Link href="/signup" className="btn-primary">Get Started</Link>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      <main className="hero-section">
+        <div className="hero-content">
+          <h1 className="title text-gradient">
+            Never Miss A <span className="text-gradient-primary">Midnight</span> Again
+          </h1>
+          <p className="subtitle">
+            Living abroad? Daylight savings messing up your timing? 
+            We calculate exactly when it's 12:00 AM IST. Get an automatic Gmail reminder to wish your friends and family at the perfect moment.
+          </p>
+          <div className="cta-group">
+            <Link href="/signup" className="btn-primary cta-btn">
+              Start Free Today
+            </Link>
+          </div>
+        </div>
+        
+        <div className="hero-visual">
+          <div className="clock-glass glass-panel">
+            <div className="clock-ring">
+              <div className="clock-hand"></div>
+            </div>
+            <h3 className="timezone-text">12:00 AM <span style={{color: "var(--primary-light)"}}>IST</span></h3>
+            <p className="local-time-text">Your local time: Auto-calculated</p>
+          </div>
         </div>
       </main>
     </div>
