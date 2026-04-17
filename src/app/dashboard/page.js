@@ -157,9 +157,17 @@ export default function DashboardOverview() {
         {circles.length === 0 && <div style={{ color: '#94a3b8', padding: '10px' }}>No circles created yet.</div>}
         {circles.map(c => {
           const count = wishes.filter(w => w.circle_id === c.id).length;
-          const isEmoji = c.name.match(/[\p{Extended_Pictographic}]/u);
-          const emoji = isEmoji ? isEmoji[0] : null;
-          const displayName = isEmoji ? c.name.replace(emoji, '').trim() : c.name;
+          let emoji = null;
+          let displayName = c.name;
+          const firstSpace = c.name.indexOf(' ');
+          if (firstSpace !== -1) {
+            const firstWord = c.name.substring(0, firstSpace);
+            // If the first token isn't a standard alphanumeric character, assume it's the emoji 
+            if (!/^[a-zA-Z0-9]$/.test(firstWord.charAt(0))) {
+               emoji = firstWord;
+               displayName = c.name.substring(firstSpace + 1);
+            }
+          }
 
           return (
             <Link key={c.id} href={`/dashboard/circles?c=${c.id}`} className="circle-card glass-panel" style={{ '--card-glow': c.color_gradient.match(/#[A-Za-z0-9]+/g)?.[0] || 'rgba(109, 40, 217, 0.2)' }}>

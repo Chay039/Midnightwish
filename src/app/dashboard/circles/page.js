@@ -102,7 +102,7 @@ function CirclesContent() {
                <div style={{ marginBottom: '16px' }}>
                  <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0 0 8px 0' }}>Quick Add:</p>
                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                   <button onClick={() => {setNewCircleName("👯‍♀️ Best Friends");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>👯‍♀️ Friends</button>
+                   <button onClick={() => {setNewCircleName("🤝 Best Friends");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>🤝 Friends</button>
                    <button onClick={() => {setNewCircleName("🏡 Family");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>🏡 Family</button>
                    <button onClick={() => {setNewCircleName("💼 Colleagues");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>💼 Colleagues</button>
                  </div>
@@ -161,9 +161,16 @@ function CirclesContent() {
                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "40px" }}>
                  <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
                    {(() => {
-                      const isEmoji = activeCircle.name.match(/[\p{Extended_Pictographic}]/u);
-                      const emoji = isEmoji ? isEmoji[0] : null;
-                      const displayName = isEmoji ? activeCircle.name.replace(emoji, '').trim() : activeCircle.name;
+                      let emoji = null;
+                      let displayName = activeCircle.name;
+                      const firstSpace = activeCircle.name.indexOf(' ');
+                      if (firstSpace !== -1) {
+                        const firstWord = activeCircle.name.substring(0, firstSpace);
+                        if (!/^[a-zA-Z0-9]$/.test(firstWord.charAt(0))) {
+                           emoji = firstWord;
+                           displayName = activeCircle.name.substring(firstSpace + 1);
+                        }
+                      }
                       return (
                         <>
                           <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: activeCircle.color_gradient, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2.5rem" }}>
