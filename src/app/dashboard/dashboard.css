@@ -335,6 +335,123 @@
   font-family: var(--font-heading);
 }
 
+/* Custom Calendar Implementation */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.calendar-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.calendar-header-nav button {
+  background: var(--surface-2);
+  border: 1px solid var(--surface-border);
+  color: #e2e8f0;
+  border-radius: var(--rad-md);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-header-nav button:hover {
+  background: var(--primary-light);
+  color: white;
+  border-color: var(--primary);
+}
+
+.calendar-header-nav h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--rad-lg);
+  overflow: hidden;
+}
+
+.calendar-weekday {
+  background: rgba(255,255,255,0.02);
+  padding: 16px 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.calendar-cell {
+  aspect-ratio: 1 / 1;
+  border-right: 1px solid var(--surface-border);
+  border-bottom: 1px solid var(--surface-border);
+  padding: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: #e2e8f0;
+  cursor: pointer;
+  background: var(--surface);
+  transition: background 0.2s;
+  overflow: hidden;
+}
+
+.calendar-cell:nth-child(7n) {
+  border-right: none;
+}
+
+.calendar-cell:hover {
+  background: rgba(14, 165, 233, 0.05);
+}
+
+.calendar-cell.is-other-month {
+  background: rgba(0,0,0,0.2) !important;
+  color: #475569;
+}
+
+.calendar-cell .date-num {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.calendar-cell.is-today .date-num {
+  background: var(--primary);
+  color: white;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+  top: -4px;
+  left: -4px;
+}
+
+.calendar-wish-badge {
+  font-size: 0.65rem;
+  background: rgba(109, 40, 217, 0.3);
+  color: #c4b5fd;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 2px solid var(--primary-light);
+}
+
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;

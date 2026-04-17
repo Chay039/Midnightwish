@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
 import { COUNTRIES } from "@/lib/timeUtils";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import "../dashboard.css";
 
-export default function AddWishPage() {
+function AddWishForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlDate = searchParams.get('date');
   const [circles, setCircles] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     eventType: "Birthday",
-    date: "",
+    date: urlDate || "",
     circleId: "",
     country: "India",
     recurs: true
@@ -60,7 +62,12 @@ export default function AddWishPage() {
 
   return (
     <div className="add-wish-page" style={{ maxWidth: "600px", margin: "0 auto", padding: "40px 0" }}>
-      <h1 className="page-title text-gradient">Add New Wish</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+        <h1 className="page-title text-gradient" style={{ margin: 0 }}>Add New Wish</h1>
+        <button onClick={() => router.back()} style={{ background: "var(--surface-2)", border: "none", color: "#94a3b8", cursor: "pointer", padding: "8px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", width: "40px", height: "40px", transition: "color 0.2s" }} onMouseOver={(e) => {e.currentTarget.style.color = "#f43f5e"}} onMouseOut={(e) => {e.currentTarget.style.color = "#94a3b8"}} title="Close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
       
       <form onSubmit={handleSubmit} className="glass-panel" style={{ padding: "40px", display: "flex", flexDirection: "column", gap: "24px" }}>
         
@@ -143,5 +150,13 @@ export default function AddWishPage() {
         </button>
       </form>
     </div>
+  );
+}
+
+export default function AddWishPage() {
+  return (
+    <Suspense fallback={<div style={{padding: "40px", color: "var(--primary-light)"}}>Loading interface...</div>}>
+      <AddWishForm />
+    </Suspense>
   );
 }
