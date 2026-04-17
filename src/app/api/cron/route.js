@@ -4,7 +4,9 @@ import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize carefully so Vercel doesn't crash during the statically analyzed build step
+// if the environment variables haven't been pasted into the Vercel dashboard yet.
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 /**
  * Triggered by a scheduler running hourly.
