@@ -102,7 +102,7 @@ function CirclesContent() {
                <div style={{ marginBottom: '16px' }}>
                  <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: '0 0 8px 0' }}>Quick Add:</p>
                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                   <button onClick={() => {setNewCircleName("🤝 Best Friends");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>🤝 Friends</button>
+                   <button onClick={() => {setNewCircleName("⭐ Best Friends");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>⭐ Friends</button>
                    <button onClick={() => {setNewCircleName("🏡 Family");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>🏡 Family</button>
                    <button onClick={() => {setNewCircleName("💼 Colleagues");}} className="badge" style={{background: 'var(--surface-2)', cursor: 'pointer', border: '1px solid var(--surface-border)', color: "white"}}>💼 Colleagues</button>
                  </div>
