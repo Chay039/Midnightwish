@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
@@ -20,8 +20,14 @@ export async function GET(request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Query Supabase for all wishes
-  const { data: wishes, error } = await supabase
+  // We MUST use the service_role_key here, otherwise Supabase Row Level Security (RLS) 
+  // will block an "anonymous" backend caller from fetching other users' wishes.
+  const adminSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const { data: wishes, error } = await adminSupabase
     .from('wishes')
     .select('*, profiles(email, user_name)');
     
@@ -31,6 +37,7 @@ export async function GET(request) {
   }
 
   let sentCount = 0;
+  const debugInfo = []; // TEMPORARY DEBUG ARRAY
 
   for (const wish of wishes || []) {
     const userEmail = wish.profiles?.email;
@@ -40,7 +47,9 @@ export async function GET(request) {
     const nowInTz = new Date().toLocaleString("en-US", { timeZone: tz, hour: 'numeric', minute: 'numeric', hour12: false });
     const tzDateStr = new Date(new Date().toLocaleString("en-US", { timeZone: tz }));
     
-    const [hour, min] = nowInTz.split(':').map(Number);
+    const [rawHour, min] = nowInTz.split(':').map(Number);
+    const hour = rawHour === 24 ? 0 : rawHour; // V8 JS often outputs "24:xx" instead of "00:xx" for midnight
+
     // By checking min < 30, we ensure that a CRON trigger running at XX:00 or XX:30 
     // will only trigger ONCE per day right at the stroke of midnight organically.
     const isMidnight = (hour === 0 && min >= 0 && min < 30);
@@ -87,11 +96,27 @@ export async function GET(request) {
         console.error("Resend delivery failed:", err);
       }
     }
+    
+    // TEMPORARY DEBUGGING INJECTION
+    debugInfo.push({
+      wishName: wish.name,
+      userEmail,
+      country: wish.country,
+      tz,
+      hour,
+      min,
+      isMidnight,
+      wishDate: wish.date,
+      wishMonthDay,
+      targetDateMatch,
+      willSend: (userEmail && isMidnight && wishMonthDay === targetDateMatch)
+    });
   }
 
   return NextResponse.json({ 
     status: "success", 
     wishesProcessed: sentCount,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    debug: debugInfo
   });
 }
