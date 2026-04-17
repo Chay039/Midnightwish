@@ -30,11 +30,19 @@ export default function DashboardOverview() {
         const enhancedWishes = wRes.data.map(w => {
            let daysLeft = 0;
            if (w.date) {
-             const d = new Date(w.date);
-             const now = new Date();
-             d.setFullYear(now.getFullYear());
-             if (d < now) d.setFullYear(now.getFullYear() + 1);
-             daysLeft = Math.ceil((d.getTime() - now.getTime()) / (1000 * 3600 * 24));
+             const targetTz = COUNTRIES.find(c => c.name === w.country)?.tz || "Asia/Kolkata";
+             const nowInTargetStr = new Date().toLocaleString("en-US", { timeZone: targetTz });
+             const targetNowDate = new Date(nowInTargetStr);
+             
+             const parts = w.date.split('-');
+             const wMonth = parseInt(parts.length === 3 ? parts[1] : parts[0]) - 1;
+             const wDay = parseInt(parts.length === 3 ? parts[2] : parts[1]);
+             
+             const targetNowMidnight = new Date(targetNowDate.getFullYear(), targetNowDate.getMonth(), targetNowDate.getDate());
+             let d = new Date(targetNowDate.getFullYear(), wMonth, wDay);
+             
+             if (d < targetNowMidnight) d.setFullYear(targetNowDate.getFullYear() + 1);
+             daysLeft = Math.round((d.getTime() - targetNowMidnight.getTime()) / (1000 * 3600 * 24));
            }
            return { ...w, daysLeft, circleName: w.circles?.name || 'Unassigned' };
         }).sort((a,b) => a.daysLeft - b.daysLeft);
@@ -114,7 +122,9 @@ export default function DashboardOverview() {
         <div className="up-next-card glass-panel">
           <div className="up-next-header">
             <span className="badge badge-accent">Up Next</span>
-            <span className="days-left">{nextEvent.daysLeft} Days Left</span>
+            <span className="days-left" style={{ fontWeight: nextEvent.daysLeft === 0 ? 'bold' : 'normal', color: nextEvent.daysLeft === 0 ? '#f43f5e' : 'inherit' }}>
+              {nextEvent.daysLeft === 0 ? "Today!" : `${nextEvent.daysLeft} Days Left`}
+            </span>
           </div>
           <div className="up-next-content">
             <div className="event-info">
@@ -125,9 +135,17 @@ export default function DashboardOverview() {
               </p>
             </div>
             <div className="event-action">
-               <div className="reminder-status">
-                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
-                 <span>Gmail Scheduled for exactly Midnight in {nextEvent.country || 'India'}</span>
+               <div className="reminder-status" style={{ background: nextEvent.daysLeft === 0 ? 'rgba(244, 63, 94, 0.1)' : undefined, border: nextEvent.daysLeft === 0 ? '1px solid rgba(244, 63, 94, 0.3)' : undefined }}>
+                 {nextEvent.daysLeft === 0 ? (
+                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                 ) : (
+                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-light)" strokeWidth="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
+                 )}
+                 <span style={{ color: nextEvent.daysLeft === 0 ? '#fecdd3' : undefined }}>
+                   {nextEvent.daysLeft === 0 
+                     ? `It's already Midnight in ${nextEvent.country || 'India'}! Wish them a Happy ${nextEvent.event}!` 
+                     : `Gmail Scheduled for exactly Midnight in ${nextEvent.country || 'India'}`}
+                 </span>
                </div>
             </div>
           </div>
@@ -168,7 +186,9 @@ export default function DashboardOverview() {
                  <div className="row-meta">{wish.event} ({wish.date}) &bull; {wish.country || 'India'}</div>
                </div>
                <div className="row-circle badge" style={{ marginRight: '16px' }}>{wish.circleName}</div>
-               <div className="row-days" style={{ marginRight: '16px' }}>{wish.daysLeft} days left</div>
+               <div className="row-days" style={{ marginRight: '16px', minWidth: '80px', textAlign: 'right' }}>
+                 {wish.daysLeft === 0 ? <span className="text-gradient"><strong>Today!</strong></span> : `${wish.daysLeft} days left`}
+               </div>
                <button onClick={() => handleDeleteWish(wish.id)} style={{ background: "transparent", border: "none", cursor: "pointer", color: "#64748b", transition: "color 0.2s", padding: "8px" }} onMouseOver={(e) => {e.currentTarget.style.color = "#f43f5e"}} onMouseOut={(e) => {e.currentTarget.style.color = "#64748b"}} title="Delete Wish">
                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                </button>
